@@ -159,9 +159,9 @@ export default function OutfitGeneration({ clothes, weatherData }) {
 		setOutfit(outfit);
 	}
 	function addToCollection(e) {
-		console.log(e.target.name, outfit);
+		console.log(e.target.dataset.collection, outfit);
 		try{
-			writeOutfit(e.target.name, outfit);
+			writeOutfit(e.target.dataset.collection, outfit);
 			setError(false);
 			setTimeout(()=>setError(null), 5000);
 		} catch (error) {
@@ -185,10 +185,10 @@ export default function OutfitGeneration({ clothes, weatherData }) {
 							<button className="button add-to-collection-btn" disabled={!outfit}>
 								<span>Add to collection</span>
 							<ul className="sub-menu">
-								<li className="add-to-collection-sub-btn" name="Winter" onClick={addToCollection}>Winter</li>
-								<li className="add-to-collection-sub-btn" name="Spring" onClick={addToCollection}>Spring</li>
-								<li className="add-to-collection-sub-btn" name="Summer" onClick={addToCollection}>Summer</li>
-								<li className="add-to-collection-sub-btn" name="Autumn" onClick={addToCollection}>Autumn</li>
+								<li className="add-to-collection-sub-btn" data-collection="Winter" onClick={addToCollection}>Winter</li>
+								<li className="add-to-collection-sub-btn" data-collection="Spring" onClick={addToCollection}>Spring</li>
+								<li className="add-to-collection-sub-btn" data-collection="Summer" onClick={addToCollection}>Summer</li>
+								<li className="add-to-collection-sub-btn" data-collection="Autumn" onClick={addToCollection}>Autumn</li>
 							</ul>
 							</button>
 						</div>
