@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/outfit-generator/static/css/main.ee49cb96.css",
-    "main.js": "/outfit-generator/static/js/main.fe17bbc4.js",
+    "main.js": "/outfit-generator/static/js/main.e740614b.js",
     "static/media/bg2.jpg": "/outfit-generator/static/media/bg2.2ed5ba02eaa393c61848.jpg",
     "static/media/bg1.jpg": "/outfit-generator/static/media/bg1.337241c4d5658cea7aec.jpg",
     "index.html": "/outfit-generator/index.html",
     "main.ee49cb96.css.map": "/outfit-generator/static/css/main.ee49cb96.css.map",
-    "main.fe17bbc4.js.map": "/outfit-generator/static/js/main.fe17bbc4.js.map"
+    "main.e740614b.js.map": "/outfit-generator/static/js/main.e740614b.js.map"
   },
   "entrypoints": [
     "static/css/main.ee49cb96.css",
-    "static/js/main.fe17bbc4.js"
+    "static/js/main.e740614b.js"
   ]
 }
