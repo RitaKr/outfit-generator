@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
 	removeClothing,
 	updateClothing,
-	weatherConditions,
 } from "../assets/DBManipulations";
 
 export default function ClothingFigure({ data, handleDialogOpen }) {
