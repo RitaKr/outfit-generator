@@ -1,12 +1,5 @@
 import { initializeApp } from "firebase/app";
-import {
-	getDatabase,
-	set,
-	ref,
-	get,
-	remove,
-
-} from "firebase/database";
+import { getDatabase, set, ref, get, remove } from "firebase/database";
 import { deleteImageFromStorage } from "./StorageManipulations";
 import { firebaseConfig } from "../firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
@@ -37,6 +30,18 @@ export const emptyForm = {
 export function removeClothing(id, imageName) {
 	remove(ref(database, `clothes/${uid}/${id}`));
 	deleteImageFromStorage(imageName);
+	
+	//removing all outfits that contained this clothing item
+	const collections = ["Winter", "Spring", "Summer", "Autumn"];
+	collections.forEach((col) => {
+		getOutfits(col).then((outfits) => {
+			outfits.forEach((outfit) => {
+				const imageNames = outfit.clothes.map((cl) => cl.imageName);
+				console.log("imageNames: ", imageNames);
+				if (imageNames.includes(imageName)) removeOutfit(outfit.id, col);
+			});
+		});
+	});
 	console.log("clothing ", id, "removed: ", clothesRef);
 }
 export function removeOutfit(id, collection) {
@@ -68,7 +73,7 @@ export function writeOutfit(collection, data) {
 		clothes: data,
 		id: id,
 		addDate: data.addDate ? data.addDate : new Date().toISOString(),
-	})
+	});
 }
 export function updateClothing(data) {
 	console.log(data);
@@ -95,7 +100,7 @@ export async function getClothes() {
 }
 export async function getOutfits(collection) {
 	try {
-		console.log(`outfits/${uid}/${collection}/`)
+		console.log(`outfits/${uid}/${collection}/`);
 		const snapshot = await get(ref(database, `outfits/${uid}/${collection}/`));
 		if (snapshot.exists()) {
 			let itemsArray = Object.values(snapshot.val()).sort(

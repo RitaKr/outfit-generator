@@ -14,7 +14,7 @@ export default function ClothingFigure({ data, handleDialogOpen }) {
 		updateClothing(data);
 	}
 	function handleDelete(e) {
-		if (window.confirm("Are you sure you want to delete " + data.name + "?")) {
+		if (window.confirm("Are you sure you want to delete " + data.name + "? All your outfits that contained this item will be deleted as well")) {
 			removeClothing(data.id, data.imageName);
 		}
 	}
