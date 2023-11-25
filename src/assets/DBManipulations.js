@@ -28,41 +28,51 @@ export const emptyForm = {
 	imageName: null,
 };
 export function removeClothing(id, imageName) {
-	remove(ref(database, `clothes/${uid}/${id}`));
-	deleteImageFromStorage(imageName);
-	
-	//removing all outfits that contained this clothing item
-	const collections = ["Winter", "Spring", "Summer", "Autumn"];
-	collections.forEach((col) => {
-		getOutfits(col).then((outfits) => {
-			outfits.forEach((outfit) => {
-				const imageNames = outfit.clothes.map((cl) => cl.imageName);
-				console.log("imageNames: ", imageNames);
-				if (imageNames.includes(imageName)) removeOutfit(outfit.id, col);
+	try {
+		remove(ref(database, `clothes/${uid}/${id}`));
+		deleteImageFromStorage(imageName);
+		
+		//removing all outfits that contained this clothing item
+		const collections = ["Winter", "Spring", "Summer", "Autumn"];
+		collections.forEach((col) => {
+			getOutfits(col).then((outfits) => {
+				outfits.forEach((outfit) => {
+					const imageNames = outfit.clothes.map((cl) => cl.imageName);
+					console.log("imageNames: ", imageNames);
+					if (imageNames.includes(imageName)) removeOutfit(outfit.id, col);
+				});
 			});
 		});
-	});
-	console.log("clothing ", id, "removed: ", clothesRef);
+		console.log("clothing ", id, "removed: ", clothesRef);
+	} catch (error) {
+		console.log("error deleting clothing "+imageName+":", error)
+	}
+	
 }
 export function removeOutfit(id, collection) {
 	remove(ref(database, `outfits/${uid}/${collection}/${id}`));
 	console.log("outfit ", id, "removed: ", clothesRef);
 }
 export function writeClothing(data) {
-	if (!data.id || data.id === "") data.id = uuidv4();
-	console.log(data.id);
-	set(ref(database, `clothes/${uid}/${data.id}`), {
-		name: data.name,
-		temperatures: data.temperatures,
-		//conditions: data.conditions,
-		type: data.type,
-		//layer: data.layer,
-		inLaundry: data.inLaundry,
-		imageUrl: data.imageUrl,
-		imageName: data.imageName,
-		id: data.id,
-		addDate: data.addDate ? data.addDate : new Date().toISOString(),
-	});
+	try {
+		if (!data.id || data.id === "") data.id = uuidv4();
+		console.log(data.id);
+		set(ref(database, `clothes/${uid}/${data.id}`), {
+			name: data.name,
+			temperatures: data.temperatures,
+			//conditions: data.conditions,
+			type: data.type,
+			//layer: data.layer,
+			inLaundry: data.inLaundry,
+			imageUrl: data.imageUrl,
+			imageName: data.imageName,
+			id: data.id,
+			addDate: data.addDate ? data.addDate : new Date().toISOString(),
+		});
+	}catch (error) {
+		console.log("error adding clothing "+data+":", error)
+	}
+	
 }
 export function writeOutfit(collection, data) {
 	const id = uuidv4();

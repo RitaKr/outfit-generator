@@ -15,11 +15,10 @@ import ClosetSearch from "../components/ClosetSearch";
 const _ = require("lodash");
 
 export default function FiltersContainer({
-    searchRef,
+	searchRef,
 	//filteredClothes,
 	setFilteredClothes,
 }) {
-	
 	const [sortDirection, setSortDirection] = useState(true);
 	const [clothes, setClothes] = useState(null);
 	const sortSelect = useRef(null);
@@ -28,31 +27,29 @@ export default function FiltersContainer({
 	const inLaundryCheck = useRef(null);
 	const sortDirectionBtn = useRef(null);
 
-
 	function handleFilters(e) {
-		
 		filterAndSortClothes(clothes, setFilteredClothes, sortSelect.current.value);
 	}
 
 	function filterAndSortClothes(clothes, setFilteredClothes, sortingParameter) {
 		//console.log("in filterAndSortClothes:");
-		
+		if (clothes) {
+            console.log("in filterAndSortClothes:", clothes, typeSelect.current.value, tempSelect.current.value, inLaundryCheck.current.checked, sortingParameter);
+			const filtered = clothes.filter((cl) => {
+				return (
+					(typeSelect.current.value === "all" ||
+						cl.type === typeSelect.current.value) &&
+					(tempSelect.current.value === "all" ||
+						cl.temperatures.includes(tempSelect.current.value)) &&
+					(!inLaundryCheck.current.checked ||
+						cl.inLaundry !== inLaundryCheck.current.checked)
+				);
+			});
 
-		const filtered = clothes.filter((cl) => {
-			return (
-				(typeSelect.current.value === "all" ||
-					cl.type === typeSelect.current.value) &&
-				(tempSelect.current.value === "all" ||
-					cl.temperatures.includes(tempSelect.current.value)) &&
-				(!inLaundryCheck.current.checked ||
-					cl.inLaundry !== inLaundryCheck.current.checked)
-			);
-		});
-
-		setFilteredClothes(sortClothes(filtered, sortingParameter));
+			setFilteredClothes(sortClothes(filtered, sortingParameter));
+		}
 	}
 
-	
 	function sortClothes(arrayToSort, sortingParameter) {
 		return _.orderBy(
 			//filteredClothes,
@@ -63,7 +60,7 @@ export default function FiltersContainer({
 	}
 
 	function handleSort(e) {
-		filterAndSortClothes(clothes, setFilteredClothes, e.target.value );
+		filterAndSortClothes(clothes, setFilteredClothes, e.target.value);
 	}
 
 	function handleDirectionChange() {
@@ -73,35 +70,36 @@ export default function FiltersContainer({
 		filterAndSortClothes(clothes, setFilteredClothes, sortSelect.current.value);
 	}
 
-    function arraysAreEqual(arr1, arr2) {
-        return arr1.length === arr2.length && arr1.every((val, index) => val === arr2[index]);
-      }
-    function equalObjects(obj1, obj2) {
-        const keys1 = Object.keys(obj1).filter(key => key !== 'inLaundry');
-        const keys2 = Object.keys(obj2).filter(key => key !== 'inLaundry');
-    
-        //checking if the keys are the same length
-        if (keys1.length !== keys2.length) {
-          return false;
-        }
-      
-        // checking if values for non-inLaundry keys are equal
-        for (let key of keys1) {
-    
-            if (typeof obj1[key] ==="object"){
-                if (!arraysAreEqual(obj1[key], obj2[key])) {
-                    return false;
-                }
-            } else if (obj1[key] !== obj2[key]) {
-            return false;
-          }
-        }
-      
-        return true;
-      }
+	function arraysAreEqual(arr1, arr2) {
+		return (
+			arr1.length === arr2.length &&
+			arr1.every((val, index) => val === arr2[index])
+		);
+	}
+	function equalObjects(obj1, obj2) {
+		const keys1 = Object.keys(obj1).filter((key) => key !== "inLaundry");
+		const keys2 = Object.keys(obj2).filter((key) => key !== "inLaundry");
 
+		//checking if the keys are the same length
+		if (keys1.length !== keys2.length) {
+			return false;
+		}
 
-    //handling sorting and filters on database updates
+		// checking if values for non-inLaundry keys are equal
+		for (let key of keys1) {
+			if (typeof obj1[key] === "object") {
+				if (!arraysAreEqual(obj1[key], obj2[key])) {
+					return false;
+				}
+			} else if (obj1[key] !== obj2[key]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	//handling sorting and filters on database updates
 	useEffect(() => {
 		async function fetchData() {
 			if (auth.currentUser) {
@@ -109,11 +107,13 @@ export default function FiltersContainer({
 					console.log("lastClothes:", data);
 
 					setClothes(data);
-					filterAndSortClothes(
-						data,
-						setFilteredClothes,
-						sortSelect.current.value
-					);
+					if (data && sortSelect) {
+						filterAndSortClothes(
+							data,
+							setFilteredClothes,
+							sortSelect.current.value
+						);
+					}
 				});
 			}
 		}
@@ -125,47 +125,52 @@ export default function FiltersContainer({
 
 				setClothes(data);
 				//console.log("calling filterAndSortClothes after adding ", data);
-				filterAndSortClothes(
-					data,
-					setFilteredClothes,
-					sortSelect.current.value
-				);
+				if (data && sortSelect) {
+                    filterAndSortClothes(
+                        data,
+                        setFilteredClothes,
+                        sortSelect.current.value
+                    );
+                }
 			});
 		});
 		onChildChanged(clothesRef, (data) => {
-            if (clothes) {
-                console.log("changed ", data.val(), data.val().id, clothes);
-                const thisCl = clothes.find(cl=>cl.id===data.val().id);
-                //re-fetching and rerendering clothes only if they were changed through form (ignoring inLaundry check)
-                if (clothes.length > 0 &&
-                    data.val().id &&
-                    !equalObjects(thisCl, data.val())
-                ) {
-                    getClothes().then((data) => {
-                        console.log("rerednder in change");
-    
-                        setClothes(data);
-                        filterAndSortClothes(
-                            data,
-                            setFilteredClothes,
-                            sortSelect.current.value
-                        );
-                    });
-                }
-            }
-            
+			if (clothes) {
+				console.log("changed ", data.val(), data.val().id, clothes);
+				const thisCl = clothes.find((cl) => cl.id === data.val().id);
+				//re-fetching and rerendering clothes only if they were changed through form (ignoring inLaundry check)
+				if (
+					clothes.length > 0 &&
+					data.val().id &&
+					!equalObjects(thisCl, data.val())
+				) {
+					getClothes().then((data) => {
+						console.log("rerednder in change");
+
+						setClothes(data);
+						filterAndSortClothes(
+							data,
+							setFilteredClothes,
+							sortSelect.current.value
+						);
+					});
+				}
+			}
 		});
-		onChildRemoved(clothesRef, (data) => {
+		onChildRemoved(clothesRef, (refData) => {
 			getClothes().then((data) => {
-				console.log("removed ", data);
+                console.log("data from getClothes:", data);
+				console.log("removed ", refData);
 
 				setClothes(data);
 				console.log("calling filterAndSortClothes after removing ", data);
-				filterAndSortClothes(
-					data,
-					setFilteredClothes,
-					sortSelect.current.value
-				);
+				if (data && sortSelect) {
+                    filterAndSortClothes(
+                        data,
+                        setFilteredClothes,
+                        sortSelect.current.value
+                    );
+                }
 			});
 		});
 	}, [auth.currentUser]);
@@ -173,7 +178,7 @@ export default function FiltersContainer({
 	useEffect(() => {
 		console.log(clothes);
 		console.log("clothes in filterContainer: " + clothes);
-		if (clothes) {
+		if (clothes && sortSelect) {
 			console.log("filtered and sorted");
 			filterAndSortClothes(
 				clothes,
@@ -184,7 +189,7 @@ export default function FiltersContainer({
 	}, [clothes, setFilteredClothes, sortDirection, sortSelect.current]);
 	return (
 		<>
-        <ClosetSearch searchRef={searchRef} clothes={clothes}/>
+			<ClosetSearch searchRef={searchRef} clothes={clothes} />
 			<div className="closet-actions-panel">
 				<div className="filters-container">
 					<div>
