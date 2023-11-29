@@ -699,8 +699,7 @@ input[type="checkbox"] {
 	margin-bottom: $laundry-check-container-height;
 }
 .clothing-card-image {
-	//max-width: 100%;
-	width: fit-content;
+	
 	max-height: 250px;
 	align-self: center;
 }
@@ -1096,8 +1095,10 @@ div[role="dialog"] {
 		}
 
 		li {
+			
 			.sub-menu {
 				//display: none;
+				
 				transition: all 0.3s ease;
 				position: relative;
 				height: 0px;
@@ -1109,7 +1110,7 @@ div[role="dialog"] {
 				}
 			}
 			&:has(.sub-menu) {
-				flex-direction: column;
+				flex-direction: column ;
 				&:hover {
 					background-color: $nav-bg-col;
 				}
@@ -1124,7 +1125,10 @@ div[role="dialog"] {
 			}
 		}
 	}
-
+	.sub-menu-holder {
+		flex-direction: column ;
+		
+	}
 	.container-fluid {
 		flex-direction: row;
 	}
@@ -1176,6 +1180,7 @@ div[role="dialog"] {
 }
 
 @media screen and (max-width: 576px) {
+	
 	.closet-container {
 		grid-template-columns: repeat(1, 1fr);
 	}

@@ -83,7 +83,7 @@ export default function Nav({ searchRef }) {
 								Closet
 							</NavLink>
 						</li>
-						<li>
+						<li className="sub-menu-holder">
 							<p>
 								Collections
 								<img src={arrowIcon} alt="arrow icon" className="arrow-icon" />

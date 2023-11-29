@@ -695,7 +695,6 @@ input[type=checkbox]:checked {
 }
 
 .clothing-card-image {
-  width: fit-content;
   max-height: 250px;
   align-self: center;
 }
@@ -1126,6 +1125,9 @@ div[role=dialog] h2 {
     transform: translateY(0) scaleY(1);
     height: fit-content;
     opacity: 1;
+  }
+  .sub-menu-holder {
+    flex-direction: column;
   }
   .container-fluid {
     flex-direction: row;
